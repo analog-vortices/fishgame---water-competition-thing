@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+}
+
+group '_'
+version '0.0.1'
+
+sourceCompatibility = 1.8
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/java/']
+//        resources.srcDirs = ['src/main/java/']
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.processing', name: 'core', version: '3.3.7'
+}
+
+jar {
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    from sourceSets.main.output
+    manifest.attributes('Main-Class' : 'main.java.FishGame')
+}
+
+task run(type: JavaExec, dependsOn: jar) {
+    standardOutput = System.out
+    errorOutput = System.err
+    classpath = files(jar.outputs.files.getAt(0))
+    main = 'main.java.FishGame'
+}
